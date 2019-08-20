@@ -149,7 +149,7 @@ will result in the code being sent 2x3x2 = 12 times (11 repeats).
 
 verb | path | description
 --|--|--
-POST | /devices/*device*  | transmits the submitted [code](#code) via [device](#device)
+POST | /device/*device*  | transmits the submitted [code](#code) via [device](#device)
 
 Status codes:
 
@@ -162,7 +162,7 @@ The topic *prefix* defaults to `broadlink` and can be changed via the configurat
 
 topic | description
 --|--
-*prefix*/devices/*device*/transmit  | transmits the submitted [code](#code) via [device](#device)
+*prefix*/device/*device*/transmit  | transmits the submitted [code](#code) via [device](#device)
 
 ### LIRC
 
