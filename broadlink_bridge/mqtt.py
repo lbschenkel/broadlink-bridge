@@ -12,6 +12,7 @@ def mqtt_on_disconnect(client, userdata, rc):
 def mqtt_transmit(client, userdata, msg):
     LOGGER.debug('MQTT %s: received message', msg.topic)
     topic = msg.topic[len(userdata['prefix']):]
+    topic = topic[len('device/'):]
     topic = topic.split('/', 1)
     device_id = topic[0]
     if not device_id:
@@ -68,7 +69,7 @@ def mqtt_connect(url, prefix='broadlink'):
     mqtt.on_connect = mqtt_on_connect
     mqtt.on_disconnect = mqtt_on_disconnect
     mqtt.connect(url.hostname, port)
-    mqtt.message_callback_add(prefix + '+/transmit', mqtt_transmit)
+    mqtt.message_callback_add(prefix + 'device/+/transmit', mqtt_transmit)
     mqtt.subscribe(prefix + '#')
     mqtt.loop_start()
     return True
