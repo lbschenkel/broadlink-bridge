@@ -46,7 +46,7 @@ As a [MQTT switch](https://www.home-assistant.io/components/switch.mqtt):
 ```yaml
 switch:
 - platform: mqtt
-  command_topic: PREFIX/DEVICE/transmit
+  command_topic: PREFIX/device/DEVICE/transmit
   body_on: CODE
   body_off: CODE
 ```
