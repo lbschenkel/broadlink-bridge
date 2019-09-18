@@ -37,8 +37,19 @@ As a [RESTful switch](https://www.home-assistant.io/components/switch.rest):
 switch:
 - platform: rest
   resource: http://BRIDGE_HOST:PORT/device/DEVICE
+  method: post
   body_on: CODE
   body_off: CODE
+```
+
+As a [RESTful command](https://www.home-assistant.io/components/rest_command):
+
+```yaml
+rest_command:
+  example_command:
+    url: http://BRIDGE_HOST:PORT/device/DEVICE
+    method: post
+    payload: CODE
 ```
 
 As a [MQTT switch](https://www.home-assistant.io/components/switch.mqtt):
