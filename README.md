@@ -31,28 +31,31 @@ To run: `broadlink-bridge [config-file]`
 
 This bridge is available as an [unnoficial add-on](https://github.com/lbschenkel/hass-addon-broadlink-bridge/tree/master/broadlink-bridge).
 
-As a [RESTful switch](https://www.home-assistant.io/components/switch.rest):
-
-```yaml
-switch:
-- platform: rest
-  resource: http://BRIDGE_HOST:PORT/device/DEVICE
-  method: post
-  body_on: CODE
-  body_off: CODE
-```
-
-As a [RESTful command](https://www.home-assistant.io/components/rest_command):
+Codes can be transmitted via [RESTful commands](https://www.home-assistant.io/components/rest_command):
 
 ```yaml
 rest_command:
-  example_command:
+  my_command:
     url: http://BRIDGE_HOST:PORT/device/DEVICE
     method: post
     payload: CODE
 ```
 
-As a [MQTT switch](https://www.home-assistant.io/components/switch.mqtt):
+Or by [publishing via MQTT](https://www.home-assistant.io/docs/mqtt/service), for example in an entity button:
+
+```yaml
+type: entity-button
+name: My command
+entity: ...
+tap_action:
+  action: call-service
+  service: mqtt.publish
+  service_data:
+    topic: PREFIX/device/DEVICE/transmit
+    payload: CODE
+```
+
+An on/off switch can be implemented directly via a [MQTT switch](https://www.home-assistant.io/components/switch.mqtt):
 
 ```yaml
 switch:
@@ -62,7 +65,36 @@ switch:
   body_off: CODE
 ```
 
-Where:
+Or by combining RESTful commands with a [boolean input](https://www.home-assistant.io/components/input_boolean)
+and an [automation](https://www.home-assistant.io/docs/automation):
+
+```yaml
+rest_command:
+  my_device_on:
+    url: http://BRIDGE_HOST:PORT/device/DEVICE
+    method: post
+    payload: CODE
+  my_device_off:
+    url: http://BRIDGE_HOST:PORT/device/DEVICE
+    method: post
+    payload: CODE
+input_boolean:
+  my_device:
+    name: My Device
+automation:
+  trigger:
+    platform: state
+    entity_id: input_boolean.my_device
+  action:
+    service_template: rest_command.my_device_{{ trigger.to_state.state }}
+```
+
+Note that the [RESTful switch](https://www.home-assistant.io/components/switch.rest)
+is not useful, because it relies on the REST endpoint providing the state
+(not possible here) and it does not implement an optimistic mode with an
+assumed state (like the MQTT switch does).
+
+In the above:
 
 - `BRIDGE_HOST` is the hostname/IP address of this bridge
 - `PORT` is the HTTP port (default `8780`)
@@ -73,7 +105,8 @@ Where:
 
 ## Configuration
 
-A configuration file can be optionally specified as a command-line argument. An [example file](config.example.ini) is provided.
+A configuration file can be optionally specified as a command-line argument.
+An [example file](config.example.ini) is provided.
 
 ### MQTT client
 
@@ -84,11 +117,15 @@ The prefix for the MQTT topics is configurable via `topic_prefix`.
 
 ### Manually declared devices
 
-Devices can be manually declared in the `[devices]` section. When a device is declared in this way it is given an *alias* which can act as an additional [identifier](#device) for the device in the bridge. Auto-discovered devices do not have aliases.
+Devices can be manually declared in the `[devices]` section. When a device is
+declared in this way it is given an *alias* which can act as an additional
+[identifier](#device) for the device in the bridge.
+Auto-discovered devices do not have aliases.
 
 ### Commands
 
-Commands can be defined in the `[commands]` section. Commands associate a *name* with a *code*. The name can then be used anywhere where a code can appear.
+Commands can be defined in the `[commands]` section. Commands associate a
+*name* with a *code*. The name can then be used anywhere where a code can appear.
 
 The code for the command can be in [any supported format](#code) and contain
 [repeats](#repeats), with the exception that it cannot be another command.
