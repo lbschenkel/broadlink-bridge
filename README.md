@@ -61,8 +61,8 @@ An on/off switch can be implemented directly via a [MQTT switch](https://www.hom
 switch:
 - platform: mqtt
   command_topic: PREFIX/device/DEVICE/transmit
-  body_on: CODE
-  body_off: CODE
+  payload_on: CODE
+  payload_off: CODE
 ```
 
 Or by combining RESTful commands with a [boolean input](https://www.home-assistant.io/components/input_boolean)
