@@ -17,9 +17,6 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_POST(self):
-        self.protocol_version = 'HTTP/1.1'
-        self.send_header('Content-Length', 0)
-
         path = self.path
         if not path.startswith('/device/'):
             return self.send_error(404)
