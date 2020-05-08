@@ -1,7 +1,6 @@
 import broadlink
 import logging
 import pkg_resources
-from .discovery import discover
 from .util import *
 
 NAME    = 'broadlink-bridge'
@@ -105,7 +104,7 @@ class Device:
         else:
             connected = False
             try:
-                self._dev = discover(self.host)
+                self._dev = broadlink.discover(discover_ip_address=self.host)
                 if self._dev:
                     connected = self._dev.auth()
             except (socket.gaierror, socket.timeout):
