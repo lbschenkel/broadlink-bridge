@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='broadlink-bridge',
-    version='0.1.3',
+    version='0.1.4',
     packages=['broadlink_bridge'],
     entry_points={
         'console_scripts': [
