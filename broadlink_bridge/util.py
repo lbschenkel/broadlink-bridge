@@ -68,7 +68,7 @@ def ir_decode(code, repeat=None):
         raise ValueError('Code too short')
     
     if repeat is not None:
-        code = copy.copy(code)
+        code = bytearray(code)
         code[1] = min((code[1] + 1) * (repeat + 1) - 1, 255)
     return (code, code[1])
 
