@@ -104,7 +104,7 @@ class Device:
         else:
             connected = False
             try:
-                self._dev = broadlink.discover(discover_ip_address=self.host)
+                self._dev = broadlink.hello(host=self.host)
                 if self._dev:
                     connected = self._dev.auth()
             except (socket.gaierror, socket.timeout):
