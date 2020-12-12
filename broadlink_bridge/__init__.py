@@ -110,6 +110,10 @@ class Device:
             except (socket.gaierror, socket.timeout):
                 pass
 
+            if connected and self._dev.get_type() == 'Unknown':
+                LOGGER.warning('Device type %s unsupported by python-broadlink module' % hex(self._dev.devtype))
+                connected = False
+
             if connected:
                 self._mac = mac_format(self._dev.mac, reverse=True)
                 self._addresses = get_ip_addresses(self._dev.host[0])

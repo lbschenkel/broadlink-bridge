@@ -29,8 +29,8 @@ def mqtt_transmit(client, userdata, msg):
     try:
         if device.transmit(code):
             return
-    except:
-        pass
+    except Exception as error:
+        LOGGER.warning('MQTT %s: transmit failed: %s', msg.topic, str(error))
     LOGGER.warning('MQTT %s: invalid payload', msg.topic)
 
 def mqtt_connect(url, prefix='broadlink'):
