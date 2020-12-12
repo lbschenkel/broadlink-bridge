@@ -2,7 +2,7 @@ FROM alpine
 
 ENV LANG C.UTF-8
 
-RUN apk add py3-cryptography py3-paho-mqtt
+RUN apk add py3-cryptography py3-paho-mqtt py3-pip
 COPY setup.py /tmp/build/
 COPY broadlink_bridge/ /tmp/build/broadlink_bridge/
 RUN pip3 install /tmp/build \
