@@ -10,9 +10,19 @@ LOGGER  = logging.getLogger(__name__)
 
 class Registry:
     def __init__(self):
+        self._device_types = {}
         self._devices = []
         self._devices_by_alias = {}
         self._commands = {}
+
+    def add_device_type(self, type_id, implementation_class, device_name, manufacturer):
+        self._device_types[type_id] = (implementation_class, device_name, manufacturer)
+
+    def has_device_type(self, type_id):
+        return type_id in self._device_types
+
+    def get_device_type(self, type_id):
+        return self._device_types[type_id]
 
     def add_manual_device(self, host, alias=None):
         return self._add_device(host, alias)
@@ -111,7 +121,14 @@ class Device:
                 pass
 
             if connected and self._dev.get_type() == 'Unknown':
-                LOGGER.warning('Device type %s unsupported by python-broadlink module' % hex(self._dev.devtype))
+                type_id = self._dev.devtype
+                LOGGER.warning('Device type %s unsupported by python-broadlink module', hex(type_id))
+                if REGISTRY.has_device_type(type_id) and type_id not in broadlink.SUPPORTED_TYPES:
+                    device_type = REGISTRY.get_device_type(type_id)
+                    broadlink.SUPPORTED_TYPES[type_id] = device_type
+                    LOGGER.warning('Trying configured device type %s: %s', type_id, device_type[2])
+                    self._dev = None
+                    return self.connect()
                 connected = False
 
             if connected:
