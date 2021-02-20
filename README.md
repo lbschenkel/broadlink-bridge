@@ -5,6 +5,9 @@ and powered by [python-broadlink](https://github.com/mjg59/python-broadlink).
 
 🛑 🚧 EXPERIMENTAL / WORK IN PROGRESS 🚧 🛑
 
+Note: that there is a [similar project for Node.js](https://github.com/401Unauthorized/broadlink-bridge)
+with the same name.
+
 ## Features
 
 - supports [HTTP](#http) protocol
