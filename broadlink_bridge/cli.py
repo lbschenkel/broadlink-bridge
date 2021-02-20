@@ -17,6 +17,8 @@ DEFAULTS = {
     },
     'devices': {
     },
+    'device_types': {
+    },
     'discovery': {
         'timeout': 5,
     },
