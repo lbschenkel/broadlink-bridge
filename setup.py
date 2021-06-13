@@ -10,8 +10,8 @@ setup(
         ],
     },
     install_requires=[
-        'broadlink==0.16.0',
-        'cryptography>=2.6',
+        'broadlink==0.17.0',
+        'cryptography>=3.2',
         'paho-mqtt>=1.4.0',
     ],
 )
