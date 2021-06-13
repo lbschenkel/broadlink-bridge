@@ -132,7 +132,7 @@ class Device:
                 connected = False
 
             if connected:
-                self._mac = mac_format(self._dev.mac, reverse=True)
+                self._mac = mac_format(self._dev.mac)
                 self._addresses = get_ip_addresses(self._dev.host[0])
                 return True
             else:
