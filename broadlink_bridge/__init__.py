@@ -106,10 +106,11 @@ class Device:
         self._dev = dev
         self._mac = None
         self._addresses = None
+        self._connected = False
         self.connect()
 
     def connect(self):
-        if self._dev:
+        if self._connected:
             return True
         else:
             connected = False
@@ -117,6 +118,7 @@ class Device:
                 self._dev = broadlink.hello(host=self.host)
                 if self._dev:
                     connected = self._dev.auth()
+                    LOGGER.info("Authenticated Device: %s", self._dev)
             except (socket.gaierror, socket.timeout):
                 pass
 
@@ -132,6 +134,7 @@ class Device:
                 connected = False
 
             if connected:
+                self._connected = True
                 self._mac = mac_format(self._dev.mac)
                 self._addresses = get_ip_addresses(self._dev.host[0])
                 return True
