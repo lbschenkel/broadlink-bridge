@@ -115,7 +115,9 @@ class Device:
         else:
             connected = False
             try:
-                self._dev = broadlink.hello(host=self.host)
+                if not self._dev:
+                    self._dev = broadlink.hello(host=self.host)
+
                 if self._dev:
                     connected = self._dev.auth()
                     LOGGER.info("Authenticated Device: %s", self._dev)
