@@ -83,7 +83,7 @@ class Registry:
 
     def _add_device(self, dev, alias=None):
         if not isinstance(dev, Device):
-            dev = Device(host=None, dev=dev)
+            dev = Device(dev=dev)
         if not alias:
             alias = dev.host
         
