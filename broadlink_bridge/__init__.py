@@ -97,15 +97,18 @@ class Registry:
             return None
 
 class Device:
-    def __init__(self, host=None, dev=None):
-        assert host or dev
-        if host is None:
-            host = dev.host[0]
-
-        self._host = host
-        self._dev = dev
+    def __init__(self, host=None):
+        self._host = None
+        self._dev = None
         self._mac = None
         self._addresses = None
+
+        if isinstance(host, str):
+            self._host = host
+        elif isinstance(host, broadlink.device.Device):
+            self._host = host.host[0]
+        assert self._host
+
         self.connect()
 
     def connect(self):
@@ -122,16 +125,18 @@ class Device:
 
             if connected and self._dev.get_type() == 'Unknown':
                 type_id = self._dev.devtype
+                connected = False
+                self._dev = None
+                
                 LOGGER.warning('Device type %s unsupported by python-broadlink module', hex(type_id))
                 if REGISTRY.has_device_type(type_id) and type_id not in broadlink.SUPPORTED_TYPES:
                     device_type = REGISTRY.get_device_type(type_id)
                     broadlink.SUPPORTED_TYPES[type_id] = device_type
                     LOGGER.warning('Trying configured device type %s: %s', type_id, device_type[2])
-                    self._dev = None
                     return self.connect()
-                connected = False
 
-            if connected:
+            if self._dev and connected:
+                LOGGER.info("Connected: %s", self._dev)
                 self._mac = mac_format(self._dev.mac)
                 self._addresses = get_ip_addresses(self._dev.host[0])
                 return True
