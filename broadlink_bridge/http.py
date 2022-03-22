@@ -1,5 +1,6 @@
 import http.server
 import threading
+import traceback
 from . import LOGGER, REGISTRY, SERVER
 
 class Handler(http.server.BaseHTTPRequestHandler):
@@ -36,12 +37,16 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if not payload:
             return self.send_error(400, 'No payload')
         try:
+            print("attempting to transmit =", payload)
             if device.transmit(payload):
+                print("success, returning 204")
                 self.send_response(204, 'OK')
                 self.end_headers()
                 return
         except ValueError:
+            traceback.print_exc()
             pass
+        print("failed, returning 400")
         self.send_error(400, 'Bad payload')
 
 def httpd_start(port):

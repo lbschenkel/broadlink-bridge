@@ -1,6 +1,7 @@
 import broadlink
 import logging
 import pkg_resources
+import traceback
 from .util import *
 
 NAME    = 'broadlink-bridge'
@@ -113,16 +114,23 @@ class Device:
 
     def connect(self):
         if self._dev:
+            print("already connected")
             return True
         else:
             connected = False
             try:
+                print("trying hello")
                 self._dev = broadlink.hello(host=self.host)
                 if self._dev:
+                    print("hello worked, trying auth")
                     connected = self._dev.auth()
+                    print("auth worked")
             except (socket.gaierror, socket.timeout):
+                traceback.print_exc()
                 pass
 
+            print("dev =", self._dev)
+            print("connected =", connected)
             if connected and self._dev.get_type() == 'Unknown':
                 type_id = self._dev.devtype
                 connected = False
@@ -135,15 +143,19 @@ class Device:
                     LOGGER.warning('Trying configured device type %s: %s', type_id, device_type[2])
                     return self.connect()
 
+            print("dev =", self._dev)
+            print("connected =", connected)
             if self._dev and connected:
                 LOGGER.info("Connected: %s", self._dev)
                 self._mac = mac_format(self._dev.mac)
                 self._addresses = get_ip_addresses(self._dev.host[0])
+                print("connect() worked")
                 return True
             else:
                 self._dev = None
                 self._mac = None
                 self._addresses = None
+        print("connect() failed")
         return False
 
     @property
@@ -169,8 +181,10 @@ class Device:
             code = code.decode('US-ASCII')
 
         (code, repeat) = ir_decode_multiply(code, repeat)
+        print("transmitting code =", code)
         command_code = REGISTRY.get_command(code)
         if command_code:
+            print("real code =", code)
             code = command_code
         return self._transmit(code, repeat=repeat)
 
@@ -178,9 +192,12 @@ class Device:
         (code, repeat) = ir_decode(code, repeat=repeat)
         LOGGER.debug('Transmitting to: %s (repeat: %s)', self, repeat)
         if self.connect():
+            print("sending =", code);
             self._dev.send_data(code)
+            print("sent")
             return True
         else:
+            print("not sending =", code);
             return False
 
     def __str__(self):
